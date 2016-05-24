@@ -18,6 +18,7 @@ public class BudgetItem extends Entity {
 	private BudgetItem(BudgetItemBuilder budgetItemBuilder) {
 		this.user = budgetItemBuilder.user;
 		this.month = budgetItemBuilder.month;
+		this.year = budgetItemBuilder.year;
 		this.parentCategory = budgetItemBuilder.parentCategory;
 		this.category = budgetItemBuilder.category;
 		this.budgeted = budgetItemBuilder.budgeted;
@@ -34,6 +35,7 @@ public class BudgetItem extends Entity {
 		public BudgetItemBuilder(User user, Month month, Year year, ParentCategory parentCategory) {
 			this.user = user;
 			this.month = month;
+			this.year = year;
 			this.parentCategory = parentCategory;
 			this.category = Category.NONE;
 			this.budgeted = BigDecimal.ZERO;
@@ -65,6 +67,14 @@ public class BudgetItem extends Entity {
 
 	public Year getYear() {
 		return year;
+	}
+
+	public ParentCategory getParentCategory() {
+		return parentCategory;
+	}
+
+	public Category getCategory() {
+		return category;
 	}
 
 }

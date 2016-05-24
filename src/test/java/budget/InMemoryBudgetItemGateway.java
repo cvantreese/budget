@@ -23,7 +23,7 @@ public class InMemoryBudgetItemGateway implements BudgetItemGateway {
 	public List<BudgetItem> findAllForUserAndBudgetPeriod(User loggedInUser, Month month, Year year) {
 		return budgetItems.stream().filter(item -> item.getUser().equals(loggedInUser) 
 				&& item.getMonth() == month 
-				&& item.getYear() == year)
+				&& item.getYear().getValue() == year.getValue())
 				.collect(Collectors.toList());
 	}
 }

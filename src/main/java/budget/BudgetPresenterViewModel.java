@@ -20,7 +20,15 @@ public class BudgetPresenterViewModel {
 	public static class ViewableBudgetItem {
 
 		public String id;
+		
+		public static class ViewableTransaction {
+			
+			
+			
+		}
 
 	}
+	
+	
 
 }
