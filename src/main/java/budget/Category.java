@@ -4,22 +4,22 @@ import java.math.BigDecimal;
 
 public enum Category {
 
-	NONE(0, "Uncategorized"), RENT(1, "Rent"), AUTO_LOAN(2, "Auto Loan"), SERVICE_FEE(3, "Service Fee");
+	NONE("Uncategorized", "Uncategorized")
+	, RENT("Rent", "Housing")
+	, AUTO_LOAN("Auto Loan", "Auto Expenses")
+	, FUEL("Fuel", "Auto Expenses")
+	, SERVICE_FEE("Service Fee", "Banking Activity")
+	, GROCERIES("", "Groceries")
+	, HOME_MAINTENANCE("Home Maintenance", "Housing")
+	, TRAVEL("", "Travel");
 
-	private int id;
-	private String value;
+	public String category;
+	public String parentCategory;
 
 
-	Category(int id, String value) {
-		this.id = id;
-		this.value = value;
+	Category(String category, String parentCategory) {
+		this.category = category;
+		this.parentCategory = parentCategory;
 	}
-
-	public int getId() {
-		return id;
-	}
-
-	public String getValue() {
-		return value;
-	}
+	
 }

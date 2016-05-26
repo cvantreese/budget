@@ -10,7 +10,6 @@ public class BudgetItem extends Entity {
 	private Month month;
 	private Year year;
 	private Category category;
-	private ParentCategory parentCategory;
 	private BigDecimal budgeted;
 	
 	private BudgetItem() {}
@@ -19,31 +18,33 @@ public class BudgetItem extends Entity {
 		this.user = budgetItemBuilder.user;
 		this.month = budgetItemBuilder.month;
 		this.year = budgetItemBuilder.year;
-		this.parentCategory = budgetItemBuilder.parentCategory;
 		this.category = budgetItemBuilder.category;
 		this.budgeted = budgetItemBuilder.budgeted;
 	}
+	
+	
+
+	@Override
+	public String toString() {
+		return "BudgetItem [user=" + user + ", month=" + month + ", year=" + year + ", category=" + category
+				+ ", budgeted=" + budgeted + "]";
+	}
+
+
 
 	public static class BudgetItemBuilder {
 		private User user;
 		private Month month;
 		private Year year;
 		private Category category;
-		private ParentCategory parentCategory;
 		private BigDecimal budgeted;
 
-		public BudgetItemBuilder(User user, Month month, Year year, ParentCategory parentCategory) {
+		public BudgetItemBuilder(User user, Month month, Year year, Category category) {
 			this.user = user;
 			this.month = month;
 			this.year = year;
-			this.parentCategory = parentCategory;
-			this.category = Category.NONE;
-			this.budgeted = BigDecimal.ZERO;
-		}
-
-		public BudgetItemBuilder category(Category category) {
 			this.category = category;
-			return this;
+			this.budgeted = BigDecimal.ZERO;
 		}
 
 		public BudgetItemBuilder budgeted(BigDecimal budgeted) {
@@ -68,11 +69,7 @@ public class BudgetItem extends Entity {
 	public Year getYear() {
 		return year;
 	}
-
-	public ParentCategory getParentCategory() {
-		return parentCategory;
-	}
-
+	
 	public Category getCategory() {
 		return category;
 	}

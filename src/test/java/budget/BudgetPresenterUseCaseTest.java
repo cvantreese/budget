@@ -27,12 +27,10 @@ public class BudgetPresenterUseCaseTest {
 		Month month = Month.MAY;
 		Year year = Year.of(2016);
 		Category category = Category.RENT;
-		ParentCategory parentCategory = ParentCategory.HOUSING;
 		BigDecimal budgeted = BigDecimal.valueOf(1350).setScale(2, RoundingMode.HALF_UP);
 		
 		
-		BudgetItem newBi = new BudgetItem.BudgetItemBuilder(user, month, year, parentCategory)
-				.category(Category.RENT)
+		BudgetItem newBi = new BudgetItem.BudgetItemBuilder(user, month, year, Category.RENT)
 				.budgeted(BigDecimal.valueOf(1450))
 				.build();
 		//Context.budgetItemGateway.save(newBi);
