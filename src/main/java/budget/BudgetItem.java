@@ -3,6 +3,8 @@ package budget;
 import java.math.BigDecimal;
 import java.time.Month;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BudgetItem extends Entity {
 
@@ -11,6 +13,10 @@ public class BudgetItem extends Entity {
 	private Year year;
 	private Category category;
 	private BigDecimal budgeted;
+	private Type type;
+	private BigDecimal actual;
+	private BigDecimal whatsLeft;
+	public static enum Type { INCOME, EXPENSE};
 	
 	private BudgetItem() {}
 	
@@ -72,6 +78,36 @@ public class BudgetItem extends Entity {
 	
 	public Category getCategory() {
 		return category;
+	}
+
+	public BigDecimal getBudgeted() {
+		return budgeted;
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	public BigDecimal getActual() {
+		return actual;
+	}
+	
+	public void calculateActual(List<Transaction> transactions) {
+		if (transactions == null) { transactions = new ArrayList<>(); }
+		actual = BigDecimal.valueOf(0);
+		for (Transaction transaction : transactions) {
+			if (transaction.getCategory() == category) {
+				actual = actual.add(transaction.getAmount());
+			}
+		}
+	}
+
+	public BigDecimal getWhatsLeft() {
+		return whatsLeft;
+	}
+	
+	public void calculateWhatsLeft() {
+		whatsLeft = budgeted.subtract(actual);
 	}
 
 }

@@ -38,10 +38,10 @@ public class BudgetPresenterUseCaseTest {
 		//budgetItems.forEach(item -> budgetItemsResponseModel.add(item));
 		
 		//List<BudgetItem> budgetItems = Context.budgetItemGateway.findAllForUserAndBudgetPeriod(loggedInUser, month, year);
-		BudgetItemsResponseModel responseModel = new BudgetItemsResponseModel();
+		BudgetPresenterResponseModel responseModel = new BudgetPresenterResponseModel();
 		responseModel.addBudgetItem(newBi);
 		presenter.present(responseModel);
-		assertEquals(newBi.getId(), responseModel.getBudgetItems().get(0).getId());
+		assertEquals(newBi.getId(), responseModel.budgetItems.get(0).getId());
 	}
 	
 }

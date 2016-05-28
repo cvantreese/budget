@@ -6,12 +6,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,11 +27,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import budget.BudgetPresenterViewModel.ViewableBudgetItem;
-import budget.BudgetPresenterViewModel.ViewableBudgetItem.ViewableTransaction;
+import budget.BudgetPresenterViewModel.ViewableTransaction;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)
 public class PresentBudgetAcceptanceTests {
+	
+	DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
 	@Before
 	public void setup() {
@@ -63,7 +67,7 @@ public class PresentBudgetAcceptanceTests {
 					Month month = LocalDate.now().getMonth();
 					Year year = Year.of(LocalDate.now().getYear());
 					usecase.requestBudget(loggedInUser, month, year, presenter);
-					assertEquals(0, presenter.getViewModel().getViewableBudgetItems().size());
+					assertEquals(0, presenter.getViewModel().viewableBudgetItems.size());
 				}
 
 			}
@@ -132,120 +136,80 @@ public class PresentBudgetAcceptanceTests {
 
 					List<BudgetItem> budgetItems = Context.budgetItemGateway.findAllForUserAndBudgetPeriod(loggedInUser,
 							month, year);
-					Collections.sort(budgetItems, new Comparator<BudgetItem>() {
-						public int compare(BudgetItem o1, BudgetItem o2) {
-							int first = o1.getCategory().parentCategory.compareTo(o2.getCategory().parentCategory);
-							int second = o1.getCategory().category.compareTo(o2.getCategory().category);
-							return (first == 0) ? second : first;
-						}
-					});
-					
+
 					List<Transaction> transactions = Context.transactionGateway
 							.findAllForUserAndBudgetPeriod(loggedInUser, month, year);
-					Collections.sort(transactions, new Comparator<Transaction>() {
-						public int compare(Transaction o1, Transaction o2) {
-							return o1.getDate().compareTo(o2.getDate());
-						}
-					});
 					
-					Set<Category> uniqueCategories = new HashSet<>();
-					budgetItems.forEach(item -> uniqueCategories.add(item.getCategory()));
-					transactions.forEach(item -> uniqueCategories.add(item.getCategory()));
 					
-					List<Category> uniqueCategoryList = new ArrayList<Category>();
-					uniqueCategories.forEach(item -> uniqueCategoryList.add(item));
-					Collections.sort(uniqueCategoryList, new Comparator<Category>() {
-						public int compare(Category o1, Category o2) {
+					BudgetPresenterResponseModel responseModel = new BudgetPresenterResponseModel();
+					budgetItems.forEach(item -> responseModel.addParentCategory(item.getCategory().parentCategory));
+					transactions.forEach(item -> responseModel.addParentCategory(item.getCategory().parentCategory));
+					
+					budgetItems.forEach(item -> responseModel.addBudgetItem(item));
+					transactions.forEach(item -> responseModel.addTransaction(item));
+					
+					
+					
+					Set<String> expectedParentCategories = new HashSet<>();
+					budgetItems.forEach(item -> expectedParentCategories.add(item.getCategory().parentCategory));
+					transactions.forEach(item -> expectedParentCategories.add(item.getCategory().parentCategory));
+					
+					List<ViewableBudgetItem> expectedBudgetItems = new ArrayList<>();
+					budgetItems.forEach(item -> item.calculateActual(transactions));
+					budgetItems.forEach(item -> item.calculateWhatsLeft());
+					budgetItems.forEach(item -> expectedBudgetItems.add(makeViewable(item)));
+					
+					Collections.sort(expectedBudgetItems, new Comparator<ViewableBudgetItem>() {
+						public int compare(ViewableBudgetItem o1, ViewableBudgetItem o2) {
 							return o1.category.compareTo(o2.category);
 						}
 					});
 					
-					Map<Category, BudgetItem> budgetItemsMapByCategory = new LinkedHashMap<>();
-					uniqueCategoryList.forEach(item -> budgetItemsMapByCategory.put(item, null));
-					
-					for (BudgetItem budgetItem : budgetItems) {
-						budgetItemsMapByCategory.put(budgetItem.getCategory(), makeViewable(budgetItem));
-					}
-					
-					for (Category category : uniqueCategories) {
-						if (budgetItemsMapByCategory.get(category) == null) {
-							budgetItemsMapByCategory.put(category, makeViewable(new BudgetItem.BudgetItemBuilder(loggedInUser, month, year, category).build()));
+					List<ViewableTransaction> expectedTransactions = new ArrayList<>();
+					transactions.forEach(item -> expectedTransactions.add(makeViewable(item)));
+					Collections.sort(expectedTransactions, new Comparator<ViewableTransaction>() {
+						public int compare(ViewableTransaction o1, ViewableTransaction o2) {
+							int date = o1.date.compareTo(o2.date);
+							if (date != 0) { return date * -1; }
+							int parentCategory = o1.parentCategory.compareTo(o2.parentCategory);
+							if (parentCategory != 0) { return parentCategory; }
+							int category = o1.category.compareTo(o2.category);
+							return category;
 						}
-					}
+					});
 					
-					/*
-					Map<Category, List<TransactionViewModel>> transactionMapByCategory = new HashMap<>();
-					uniqueCategoryList.forEach(item -> transactionMapByCategory.put(item, new ArrayList<>()));
+					presenter.present(responseModel);
+					List<ViewableBudgetItem> actualBudgetItems = presenter.viewModel.viewableBudgetItems;
+					Set<String> actualParentCategories = presenter.viewModel.viewableParentCategories;
+					List<ViewableTransaction> actualTransactions = presenter.viewModel.viewableTransactions;
 					
-					for (Transaction transaction : transactions) {
-						transactionMapByCategory.get(transaction.getCategory()).add(makeViewable(transaction));
-					}
+					assertEquals(expectedParentCategories, actualParentCategories);
+					assertEquals(expectedBudgetItems, actualBudgetItems);
+					assertEquals(expectedTransactions, actualTransactions);
 					
-					Map<Category, BudgetItemViewModel> budgetItemsMapByCategory = new HashMap<>();
-					uniqueCategoryList.forEach(item -> budgetItemsMapByCategory.put(item, null));
-					
-					for (BudgetItem budgetItem : budgetItems) {
-						budgetItemsMapByCategory.put(budgetItem.getCategory(), makeViewable(budgetItem));
-					}
-					
-					for (Category category : uniqueCategories) {
-						if (budgetItemsMapByCategory.get(category) == null) {
-							budgetItemsMapByCategory.put(category, makeViewable(new BudgetItem.BudgetItemBuilder(loggedInUser, month, year, category).build()));
-						}
-					}
-					Map<BudgetItemViewModel, List<TransactionViewModel>> budgetAndTransactionsMap = new LinkedHashMap<>();
-					uniqueCategoryList.forEach(item -> budgetAndTransactionsMap.put(budgetItemsMapByCategory.get(item), transactionMapByCategory.get(item)));
-					
-					Map<Category, Map<BudgetItemViewModel, List<TransactionViewModel>>> budgetCategoryMap = new LinkedHashMap<>();
-										
-					for (BudgetItem budgetItem : budgetAndTransactionsMap.keySet()) {
-						Map<BudgetItemViewModel, List<TransactionViewModel>> localBudgetAndTransactionsMap = new LinkedHashMap<>();
-						localBudgetAndTransactionsMap.put(makeViewablebudgetItem, budgetAndTransactionsMap.get(budgetItem));
-						budgetCategoryMap.put(budgetItem.getCategory(), localBudgetAndTransactionsMap);
-					}
-					
-					Map<String, Map<Category, Map<BudgetItemViewModel, List<TransactionViewModel>>>> budgetMap = new LinkedHashMap<>();
-					for (Category category : uniqueCategoryList) {
-						String key = category.parentCategory;
-						Map<Category, Map<BudgetItemViewModel, List<TransactionViewModel>>> value = new LinkedHashMap<>();
-						
-						value.put(category, budgetCategoryMap.get(category));
-						budgetMap.put(key, value);
-					}
-					*/
-					BudgetViewModel budgetViewModel = new BudgetViewModel();
-					for (Category category : uniqueCategoryList) {
-						Map<String, Map<Category, Map<BudgetItemViewModel, List<TransactionViewModel>>>> budgetMap = new LinkedHashMap<>();
-						
-						Map<Category, Map<BudgetItemViewModel, List<TransactionViewModel>>> budgetCategoryMap = new LinkedHashMap<>();
-						budgetCategoryMap.put(category, null);
-						budgetMap.put(category, budgetCategoryMap);
-						
-						Map<BudgetItemViewModel, List<TransactionViewModel>> budgetAndTransactionMap = new LinkedHashMap<>();
-						BudgetItem filteredBudgetItem = budgetItemsMapByCategory.get(category);
-						BudgetItemViewModel budgetItemViewModel = makeViewable(filteredBudgetItem);
-						
-						budgetAndTransactionMap.put(budgetItemViewModel, null);
-						
-						//TODO finish this -in middle of simplifying code
-					}
-					
-					uniqueCategoryList.forEach(item -> System.out.println("key: " + item + " :: value: " + budgetMap.get(item.parentCategory)));
-					//budgetCategoryMap.keySet().forEach(item -> System.out.println(item));
-					
-					//budgetItemsMapByCategory.keySet().forEach(item -> System.out.println(item));
-					//transactionMapByCategory.get(Category.GROCERIES).forEach(item -> System.out.println(item));
-					//System.out.println(budgetItemsMapByCategory.get(Category.RENT));
-					
-					
-					BudgetPresenterResponseModel responseModel = new BudgetPresenterResponseModel();
+				}
 
-					// Map<BudgetItem, Transaction> budgetTransactionMap = new
-					// HashMap
+				private ViewableTransaction makeViewable(Transaction transaction) {
+					ViewableTransaction viewableTransaction = new ViewableTransaction();
+					viewableTransaction.id = transaction.getId();
+					viewableTransaction.user = transaction.getUser().getId();
+					viewableTransaction.date = transaction.getDate().format(dateFormatter);
+					viewableTransaction.amount = transaction.getAmount().toString();
+					viewableTransaction.description = transaction.getDescription();
+					viewableTransaction.parentCategory = transaction.getCategory().parentCategory;
+					viewableTransaction.category = transaction.getCategory().category;
+					return viewableTransaction;
+				}
 
-					// sortedCategoryList.forEach(item ->
-					// responseModel.addResponseModel(item));
-
+				private ViewableBudgetItem makeViewable(BudgetItem budgetItem) {
+					ViewableBudgetItem viewableBudgetItem = new ViewableBudgetItem();
+					viewableBudgetItem.budgeted = budgetItem.getBudgeted().toString();
+					viewableBudgetItem.category = budgetItem.getCategory().category;
+					viewableBudgetItem.id = budgetItem.getId();
+					viewableBudgetItem.type = (budgetItem.getType() == BudgetItem.Type.EXPENSE ? "Expense" : "Income");
+					viewableBudgetItem.actual = budgetItem.getActual().toString();
+					viewableBudgetItem.whatsLeft = budgetItem.getWhatsLeft().toString();
+					return viewableBudgetItem;
 				}
 
 			}

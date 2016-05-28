@@ -12,11 +12,13 @@ public class Transaction extends Entity {
 	private LocalDate date;
 	private Category category;
 	private BigDecimal amount;
+	private String description;
 
 	public Transaction(TransactionBuilder transactionBuilder) {
 		this.user = transactionBuilder.user;
 		this.date = transactionBuilder.date;
 		this.category = transactionBuilder.category;
+		this.description = transactionBuilder.description;
 		this.amount = transactionBuilder.amount;
 		
 	}
@@ -32,10 +34,19 @@ public class Transaction extends Entity {
 	public User getUser() {
 		return user;
 	}
+	
+	public BigDecimal getAmount() {
+		return amount;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
 
 	@Override
 	public String toString() {
-		return "Transaction [user=" + user + ", date=" + date + ", category=" + category + ", amount=" + amount + "]";
+		return "Transaction [user=" + user + ", date=" + date + ", category=" + category + ""
+				+ ", amount=" + amount + ", description=" + description + "]";
 	}
 
 	public static class TransactionBuilder {
@@ -74,5 +85,6 @@ public class Transaction extends Entity {
 		}
 
 	}
+
 
 }
