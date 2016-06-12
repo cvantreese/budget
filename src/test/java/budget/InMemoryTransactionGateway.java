@@ -9,22 +9,11 @@ import java.util.stream.Collectors;
 
 import budget.Transaction.TransactionBuilder;
 
-public class InMemoryTransactionGateway implements TransactionGateway {
-
-	private List<Transaction> transactions = new ArrayList<>();
-
-	@Override
-	public Transaction save(Transaction transaction) {
-		if (transaction.getId() == null) {
-			transaction.setId(UUID.randomUUID().toString());
-		}
-		transactions.add(transaction);
-		return transaction;
-	}
+public class InMemoryTransactionGateway extends GatewayUtils<Transaction> implements TransactionGateway {
 
 	@Override
 	public List<Transaction> findAllForUserAndBudgetPeriod(User loggedInUser, Month month, Year year) {
-		return transactions.stream().filter(item -> item.getUser().equals(loggedInUser) 
+		return getEntities().stream().filter(item -> item.getUser().equals(loggedInUser) 
 				&& item.getDate().getMonth() == month 
 				&& item.getDate().getYear() == year.getValue())
 				.collect(Collectors.toList());
