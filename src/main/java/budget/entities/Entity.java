@@ -1,4 +1,4 @@
-package budget;
+package budget.entities;
 
 public class Entity implements Cloneable {
 	private String id;
@@ -7,7 +7,7 @@ public class Entity implements Cloneable {
 	public void setId(String id) { this.id = id; }
 	
 	@Override
-	protected Entity clone() {
+	public Entity clone() {
 		try {
 			return (Entity) super.clone();
 		} catch (CloneNotSupportedException e) {

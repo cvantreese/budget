@@ -1,4 +1,4 @@
-package budget;
+package budget.entities;
 
 import java.math.BigDecimal;
 import java.time.Month;

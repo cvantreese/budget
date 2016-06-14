@@ -1,4 +1,4 @@
-package budget;
+package budget.usecases.budgetpresenter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import budget.BudgetItem.Type;
-import budget.BudgetPresenterViewModel.ViewableBudgetItem;
-import budget.BudgetPresenterViewModel.ViewableTransaction;
+import budget.entities.BudgetItem.Type;
+import budget.usecases.budgetpresenter.BudgetPresenterViewModel.ViewableBudgetItem;
+import budget.usecases.budgetpresenter.BudgetPresenterViewModel.ViewableTransaction;
 
 public class BudgetPresenterViewModel {
 

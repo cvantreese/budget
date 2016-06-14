@@ -1,4 +1,4 @@
-package budget;
+package budget.acceptancetests;
 
 import static org.junit.Assert.*;
 
@@ -26,8 +26,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import budget.BudgetPresenterViewModel.ViewableBudgetItem;
-import budget.BudgetPresenterViewModel.ViewableTransaction;
+import budget.Context;
+import budget.Gatekeeper;
+import budget.doubles.InMemoryBudgetItemGateway;
+import budget.doubles.InMemoryTransactionGateway;
+import budget.doubles.InMemoryUserGateway;
+import budget.entities.BudgetItem;
+import budget.entities.Category;
+import budget.entities.Transaction;
+import budget.entities.User;
+import budget.usecases.budgetpresenter.BudgetPresenter;
+import budget.usecases.budgetpresenter.BudgetPresenterResponseModel;
+import budget.usecases.budgetpresenter.BudgetPresenterUseCase;
+import budget.usecases.budgetpresenter.BudgetPresenterViewModel.ViewableBudgetItem;
+import budget.usecases.budgetpresenter.BudgetPresenterViewModel.ViewableTransaction;
 import de.bechte.junit.runners.context.HierarchicalContextRunner;
 
 @RunWith(HierarchicalContextRunner.class)

@@ -1,16 +1,18 @@
-package budget;
+package budget.usecases.budgetpresenter;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import budget.BudgetPresenterViewModel.ViewableBudgetItem;
-import budget.BudgetPresenterViewModel.ViewableTransaction;
+import budget.entities.BudgetItem;
+import budget.entities.Transaction;
+import budget.usecases.budgetpresenter.BudgetPresenterViewModel.ViewableBudgetItem;
+import budget.usecases.budgetpresenter.BudgetPresenterViewModel.ViewableTransaction;
 
 public class BudgetPresenter {
 	
-	BudgetPresenterViewModel viewModel;
+	public BudgetPresenterViewModel viewModel;
 
 	public BudgetPresenterViewModel getViewModel() {
 		return viewModel; 

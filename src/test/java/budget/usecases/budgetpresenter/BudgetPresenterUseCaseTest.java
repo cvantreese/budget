@@ -1,4 +1,4 @@
-package budget;
+package budget.usecases.budgetpresenter;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import budget.entities.BudgetItem;
+import budget.entities.Category;
+import budget.entities.User;
+import budget.usecases.budgetpresenter.BudgetPresenter;
 
 public class BudgetPresenterUseCaseTest {
 	

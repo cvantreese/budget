@@ -1,4 +1,4 @@
-package budget;
+package budget.entities;
 
 import java.util.UUID;
 

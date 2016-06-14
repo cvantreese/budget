@@ -1,9 +1,11 @@
-package budget;
+package budget.doubles;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import budget.entities.Entity;
 
 public class GatewayUtils<T extends Entity> {
 	

@@ -1,4 +1,4 @@
-package budget;
+package budget.doubles;
 
 import java.time.Month;
 import java.time.Year;
@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import budget.Transaction.TransactionBuilder;
+import budget.entities.Transaction;
+import budget.entities.User;
+import budget.entities.Transaction.TransactionBuilder;
+import budget.gateways.TransactionGateway;
 
 public class InMemoryTransactionGateway extends GatewayUtils<Transaction> implements TransactionGateway {
 

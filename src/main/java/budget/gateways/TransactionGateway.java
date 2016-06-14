@@ -1,10 +1,12 @@
-package budget;
+package budget.gateways;
 
 import java.time.Month;
 import java.time.Year;
 import java.util.List;
 
-import budget.Transaction.TransactionBuilder;
+import budget.entities.Transaction;
+import budget.entities.User;
+import budget.entities.Transaction.TransactionBuilder;
 
 public interface TransactionGateway {
 

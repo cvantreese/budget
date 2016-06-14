@@ -1,10 +1,10 @@
-package budget;
+package budget.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 
-import budget.Transaction.TransactionBuilder;
+import budget.entities.Transaction.TransactionBuilder;
 
 public class Transaction extends Entity {
 

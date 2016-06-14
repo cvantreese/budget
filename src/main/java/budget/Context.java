@@ -1,5 +1,9 @@
 package budget;
 
+import budget.gateways.BudgetItemGateway;
+import budget.gateways.TransactionGateway;
+import budget.gateways.UserGateway;
+
 public class Context {
 
 	public interface transactionGateway {

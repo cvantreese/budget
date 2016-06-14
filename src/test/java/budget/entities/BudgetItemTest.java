@@ -1,4 +1,4 @@
-package budget;
+package budget.entities;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import budget.entities.BudgetItem;
+import budget.entities.Category;
+import budget.entities.Transaction;
+import budget.entities.User;
 
 public class BudgetItemTest {
 	
