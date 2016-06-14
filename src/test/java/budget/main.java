@@ -23,12 +23,11 @@ public class main {
 		context.setResourceBase("/");
 		context.setContextPath("/");
 		context.setParentLoaderPriority(true);
-		org.eclipse.jetty.webapp.Configuration.ClassList classlist = org.eclipse.jetty.webapp.Configuration.ClassList
-				.setServerDefault(server);
-		classlist.addAfter("org.eclipse.jetty.webapp.FragmentConfiguration",
-				"org.eclipse.jetty.plus.webapp.EnvConfiguration", "org.eclipse.jetty.plus.webapp.PlusConfiguration");
-		classlist.addBefore("org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
-				"org.eclipse.jetty.annotations.AnnotationConfiguration");
+		context.setConfigurations(new Configuration[] {
+	            new AnnotationConfiguration(), new WebXmlConfiguration(),
+	            new WebInfConfiguration(),
+	            new PlusConfiguration(), new MetaInfConfiguration(),
+	            new FragmentConfiguration(), new EnvConfiguration() });
 		context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
 				".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$|.*/classes/.*");
 		//context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern", ".*/classes/.*");
